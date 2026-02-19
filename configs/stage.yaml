@@ -1,0 +1,5 @@
+project_id: vertex-ml-stage
+region: asia-south1
+pipeline_root: gs://vertex-ml-stage-pipelines
+artifact_registry_repo: asia-south1-docker.pkg.dev/vertex-ml-stage/vertex-repo
+service_account: vertex-pipeline-sa@vertex-ml-stage.iam.gserviceaccount.com

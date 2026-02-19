@@ -1,0 +1,5 @@
+project_id: vertex-ai-learning-487906
+region: asia-south1
+pipeline_root: gs://vertex-ai-learning-487906-pipelines
+artifact_registry_repo: asia-south1-docker.pkg.dev/vertex-ai-learning-487906/vertex-repo
+service_account: vertex-pipeline-sa@vertex-ai-learning-487906.iam.gserviceaccount.com
