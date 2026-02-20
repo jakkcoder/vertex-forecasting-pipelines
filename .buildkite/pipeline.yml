@@ -1,0 +1,45 @@
+# Buildkite CI/CD pipeline for Vertex AI forecasting pipelines
+# Triggers on push to main (configure in Buildkite pipeline settings)
+#
+# Required Buildkite secrets:
+#   GCP_SA_KEY - Service account JSON (full content) for Vertex AI access
+#   Or set GOOGLE_APPLICATION_CREDENTIALS to path of key file on agent
+
+env:
+  PIPELINE_ENV: dev
+
+steps:
+  - label: ":python: Setup"
+    commands:
+      - pip install uv
+      - uv sync
+
+  - label: ":mag: Validate"
+    commands:
+      - uv run python -c "
+          import sys
+          sys.path.insert(0, 'pipelines/src')
+          from run_pipeline import hello_pipeline
+          from kfp import compiler
+          compiler.Compiler().compile(
+              pipeline_func=hello_pipeline,
+              package_path='pipelines/src/compiled_pipeline.json',
+          )
+          print('Pipeline compiles OK')
+        "
+    depends_on: ":python: Setup"
+
+  - label: ":rocket: Deploy to Vertex AI"
+    commands:
+      - |
+        if [ -n "$${GCP_SA_KEY}" ]; then
+          printf '%s' "$$GCP_SA_KEY" > gcp-credentials.json
+          export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/gcp-credentials.json"
+        fi
+      - uv run python pipelines/src/run_pipeline.py --env "$${PIPELINE_ENV:-dev}"
+      - |
+        [ -f gcp-credentials.json ] && rm -f gcp-credentials.json
+    env:
+      PIPELINE_ENV: dev
+    depends_on: ":mag: Validate"
+    branches: main

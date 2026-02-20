@@ -1,0 +1,12 @@
+[project]
+name = "vertex-forecasting-pipelines"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-cloud-aiplatform>=1.138.0",
+    "google-cloud-pipeline-components>=2.22.0",
+    "kfp>=2.15.2",
+    "pyyaml>=6.0.3",
+]
